@@ -88,17 +88,19 @@ const PouOrItfSection = ({ element }: IecElement) => {
                     case "Action":
                     case "Transition":
                         return <IecSection key={name} name={name} element={c} />
-                        break;
                     case "Property":
                         const setter = c.getElementsByTagName("Set")[0];
                         const getter = c.getElementsByTagName("Get")[0];
+                        var sections = new Array();
                         if (setter) {
-                            <IecSection key={name} name={name} element={setter} />
+                            const pName = name + ".Set";
+                            sections.push(<IecSection key={pName} name={pName} element={setter} />);
                         }
                         if (getter) {
-                            <IecSection key={name} name={name} element={getter} />
+                            const pName = name + ".Get";
+                            sections.push(<IecSection key={pName} name={pName} element={getter} />);
                         }
-                        break;
+                        return sections;
                     case "Folder":
                         break;
                     default:

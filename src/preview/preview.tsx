@@ -43,13 +43,9 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
     public render(): JSX.Element {
         const { xml } = this.state;
         const iframeUrl = window.location.href;
-        const isV2 = window.location.search.indexOf("v2=true") >= 0;
         return (
             <Page className="sample-hub flex-grow">
-                <Header title={"File"} />
                 <div className="page-content">
-                    <p>Feature ABC page</p>
-                    <p>iframe url: {iframeUrl}</p>
                     <IecViewer xml={xml} />
                 </div>
             </Page>

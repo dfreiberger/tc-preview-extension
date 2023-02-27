@@ -46,6 +46,7 @@ const IecSection = ({ name, element }: IecElement) => {
 
 const PouOrItfSection = ({ element }: IecElement) => {
     const pouNodes = Array.from(element.children);
+    const pouName = `(POU) ${element.getAttribute("Name")}`;
 
     pouNodes.sort((a, b) => {
         try {
@@ -72,6 +73,7 @@ const PouOrItfSection = ({ element }: IecElement) => {
     // Get all Methods, Actions, Transitions, and Properties
     return (
         <div>
+            <IecSection key={pouName} name={pouName} element={element} />
             {pouNodes.map((c, i) => {
                 const folderPath = c.getAttribute("FolderPath");
                 var childName = folderPath ? folderPath : "";

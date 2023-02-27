@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Firefox",
+      "type": "firefox",
+      "request": "launch",
+      "url": "https://localhost:3000/dist/hub/hub.html",
+      "reAttach": true,
+      "pathMappings": [
+        {
+          "url": "webpack://hot-reload-and-debug/src",
+          "path": "${workspaceFolder}/src"
+        }
+      ]
+    },
+    {
+      "name": "Launch Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "https://localhost:3000/dist/hub/hub.html",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "trace": true
+    },
+    {
+      "name": "Attach to Chrome",
+      "type": "chrome",
+      "request": "attach",
+      "url": "https://localhost:3000/dist/hub/hub.html",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "trace": true
+    }
+  ]
+}

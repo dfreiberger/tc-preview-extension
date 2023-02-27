@@ -1,0 +1,55 @@
+{
+  "manifestVersion": 1,
+  "version": "0.1.18",
+  "name": "Unofficial Beckhoff TwinCAT 3 preview extension",
+  "description": "An extension for previewing TwinCAT files in repos",
+  "publisher": "dfreiberger",
+  "demands": ["api-version/3.0"],
+  "categories": ["Azure Repos"],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "content": {
+    "details": {
+      "path": "README.md"
+    }
+  },
+  "icons": {
+    "default": "img/world.png"
+  },
+  "files": [
+    {
+      "path": "dist",
+      "addressable": true
+    },
+    {
+      "path": "img",
+      "addressable": true
+    }
+  ],
+  "contributions": [
+    {
+      "id": "tc-preview",
+      "type": "ms.vss-code-web.content-renderer",
+      "targets": [
+          "ms.vss-code-web.content-renderer-collection"
+      ],
+      "properties": {
+          "uri": "dist/preview/preview.html",
+          "fileExtensions": [
+              "TcPOU",
+              "TcDUT",
+              "TcGVL",
+              "TcIO"
+          ],
+          "mimeTypes": [
+              "text/html"
+          ],
+          "defaultBehavior": "showRenderedContent",
+          "registeredObjectId": "tc-preview"
+      }
+    }
+  ]
+}

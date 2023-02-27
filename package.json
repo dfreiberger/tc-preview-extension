@@ -1,0 +1,53 @@
+{
+  "name": "tc-preview-extension",
+  "description": "Unofficial Beckhoff TwinCAT 3 preview extension",
+  "author": "David Freiberger",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dfreiberger/tc-preview-extension"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist ./out",
+    "compile": "npm run clean && webpack --mode production",
+    "compile:dev": "npm run clean && webpack --mode development",
+    "package": "npm run compile && tfx extension create --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out",
+    "package:dev": "npm run compile:dev && tfx extension create --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out",
+    "publish": "npm run compile && tfx extension publish --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out",
+    "publish:dev": "npm run compile:dev && tfx extension publish --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out",
+    "start:dev": "webpack-dev-server --mode development"
+  },
+  "dependencies": {
+    "azure-devops-extension-api": "^1.158.0",
+    "azure-devops-extension-sdk": "^2.0.11",
+    "azure-devops-ui": "^2.167.53",
+    "prism-themes": "^1.9.0",
+    "prismjs": "^1.29.0",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
+  },
+  "devDependencies": {
+    "@types/prismjs": "^1.26.0",
+    "@types/react": "^16.14.34",
+    "@types/react-dom": "^16.9.17",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.48.1",
+    "@webpack-cli/generators": "^3.0.1",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "node-sass": "^8.0.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^4.1.2",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1",
+    "tfx-cli": "^0.12.0",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.9.3",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
+  }
+}

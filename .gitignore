@@ -1,0 +1,9 @@
+node_modules/
+typings/
+dist/
+out/
+
+# macOS
+.DS_Store
+
+publish-dev.ps1

@@ -1,5 +1,5 @@
 {
-  "id": "hot-reload-and-debug-dev",
+  "id": "tc-preview-extension-dev",
   "public": false,
   "baseUri": "https://localhost:3000"
 }

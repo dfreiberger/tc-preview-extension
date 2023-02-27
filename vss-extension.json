@@ -1,9 +1,9 @@
 {
   "manifestVersion": 1,
-  "version": "1.0.0",
-  "name": "Hot Reload and Debug",
-  "description": "Use hot reload and debug directly in VS Code",
-  "publisher": "microsoft",
+  "version": "0.1.18",
+  "name": "Unofficial Beckhoff TwinCAT 3 preview extension",
+  "description": "An extension for previewing TwinCAT files in repos",
+  "publisher": "dfreiberger",
   "demands": ["api-version/3.0"],
   "categories": ["Azure Repos"],
   "targets": [
@@ -30,6 +30,27 @@
     }
   ],
   "contributions": [
+    {
+      "id": "tc-preview",
+      "type": "ms.vss-code-web.content-renderer",
+      "targets": [
+          "ms.vss-code-web.content-renderer-collection"
+      ],
+      "properties": {
+          "uri": "dist/preview/preview.html",
+          "fileExtensions": [
+              "TcPOU",
+              "TcDUT",
+              "TcGVL",
+              "TcIO"
+          ],
+          "mimeTypes": [
+              "text/html"
+          ],
+          "defaultBehavior": "showRenderedContent",
+          "registeredObjectId": "tc-preview"
+      }
+    },
     {
       "id": "hello-world-hub-group",
       "type": "ms.vss-web.hub-group",

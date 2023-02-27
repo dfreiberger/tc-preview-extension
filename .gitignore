@@ -5,3 +5,5 @@ out/
 
 # macOS
 .DS_Store
+
+publish-dev.ps1

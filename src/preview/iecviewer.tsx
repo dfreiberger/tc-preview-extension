@@ -26,16 +26,17 @@ const IecSection = ({ name, element }: IecElement) => {
 
     const implementation = element.getElementsByTagName("Implementation")[0];
     const implementationST = implementation ? implementation.getElementsByTagName("ST")[0] : null;
-    const implementationContent = implementationST ? implementationST.textContent : "No content"
+    const implementationContent = implementationST ? implementationST.textContent : "Unable to display content, it may be an unsupported format"
 
     return (
         <div>
             <h4>{name}</h4>
+            {(declaration && 
             <pre className='line-numbers'>
                 <code className='language-iecst'>
                     {declarationContent}
                 </code>
-            </pre>
+            </pre> )}
             {(implementation && 
             <pre className='line-numbers'> 
                 <code className='language-iecst'>

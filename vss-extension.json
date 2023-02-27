@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "version": "0.1.21",
+  "version": "0.1.22",
   "name": "TcPreview",
-  "description": "An extension for previewing TwinCAT files in repos",
+  "description": "An extension for viewing TwinCAT files in Azure DevOps",
   "publisher": "dfreiberger",
   "demands": ["api-version/3.0"],
   "categories": ["Azure Repos"],
@@ -17,7 +17,7 @@
     }
   },
   "icons": {
-    "default": "img/world.png"
+    "default": "img/cat.png"
   },
   "files": [
     {

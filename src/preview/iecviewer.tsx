@@ -5,6 +5,8 @@ import 'prismjs';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-iecst'; // Language
+import "prismjs/plugins/line-numbers/prism-line-numbers";
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import 'prism-themes/themes/prism-vs.min.css'; // Theme
 
 Prism.manual = true;
@@ -29,16 +31,17 @@ const IecSection = ({ name, element }: IecElement) => {
     return (
         <div>
             <h4>{name}</h4>
-            <pre>
+            <pre className='line-numbers'>
                 <code className='language-iecst'>
                     {declarationContent}
                 </code>
             </pre>
-            <pre> 
+            {(implementation && 
+            <pre className='line-numbers'> 
                 <code className='language-iecst'>
                     {implementationContent}
                 </code>
-            </pre>
+            </pre> )}
         </div>
     )
 };

@@ -4,6 +4,7 @@ import "./preview.scss";
 import * as SDK from "azure-devops-extension-sdk";
 import { Header } from "azure-devops-ui/Header";
 import { Page } from "azure-devops-ui/Page";
+import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 
 import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IExtensionDataService  } from "azure-devops-extension-api";
 
@@ -44,13 +45,14 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const { xml } = this.state;
         const iframeUrl = window.location.href;
         return (
-            <Page className="sample-hub flex-grow">
-                <div className="page-content">
-                    <IecViewer xml={xml} />
-                </div>
-            </Page>
+            <SurfaceContext.Provider value={{ background: SurfaceBackground.normal }}>
+                <Page className="tc-preview-page absolute-fill">
+                    <div className="page-content">
+                        <IecViewer xml={xml} />
+                    </div>
+                </Page>
+            </SurfaceContext.Provider>
         );
     }
 }
-
 ReactDOM.render(<PreviewContent />, document.getElementById("root"));

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import 'prismjs';
 import Prism from 'prismjs';
@@ -7,7 +6,9 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-iecst'; // Language
 import "prismjs/plugins/line-numbers/prism-line-numbers";
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
-import 'prism-themes/themes/prism-vs.min.css'; // Theme
+
+import darkTheme from './prism-dark.module.css';
+import lightTheme from './prism-light.module.css';
 
 Prism.manual = true;
 
@@ -124,8 +125,26 @@ const IecViewer = ({ xml }: IecViewerData) => {
         Prism.highlightAll();
     }, [xml]);
 
+    const [currentTheme, setCurrentTheme] = useState(lightTheme.prism_container);
+
+    useEffect(() => {
+        const onThemeChanged = (event : any) => {
+            console.log("here", event);
+            // if (event.detail.name === "Dark")
+            //     setCurrentTheme(darkTheme.prism_container)
+            // else
+            //     setCurrentTheme(lightTheme.prism_container)
+        };
+
+        window.addEventListener("CustomEvent", onThemeChanged); 
+
+        return () => {
+            window.removeEventListener("themeApplied", onThemeChanged);
+        }
+    })
+
     return (
-        <div>
+        <div className={currentTheme}>
             {Array.from(xml.children[0].children).map((n, i) => {
                 var name = n.getAttribute("Name") ?? "?";
                 switch (n.nodeName) {

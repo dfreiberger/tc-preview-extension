@@ -2,11 +2,12 @@ import "azure-devops-ui/Core/override.css";
 import "./preview.scss";
 
 import * as SDK from "azure-devops-extension-sdk";
+
 import { Header } from "azure-devops-ui/Header";
 import { Page } from "azure-devops-ui/Page";
 import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 
-import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IExtensionDataService  } from "azure-devops-extension-api";
+import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IProjectPageService, IExtensionDataService  } from "azure-devops-extension-api";
 
 import * as React from "react";
 
@@ -38,7 +39,27 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const fileContent = SDK.getConfiguration().content;
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(fileContent, "text/xml");
-        this.setState({ xml : xmlDoc });
+
+        // const hostInfo = SDK.getHost();
+        // console.log(hostInfo)
+        
+        //         //{ credentials: 'include'})
+        // fetch(`https://dev.azure.com/${hostInfo.name}/_apis/Settings/Entries/globalme`,
+        //     {
+        //         method: "GET",
+        //         headers: { 
+        //             'Authorization': 'Basic ' + btoa(`${SDK.getUser().name}:${SDK.getAccessToken()}`)
+        //         },
+        //     })
+        //     .then((res) => {
+        //         console.log(res);
+        //         res.json();
+        //     })
+        //     .then(res => {
+        //         console.log(res);
+        //     });
+
+        this.setState({ xml : xmlDoc }); 
     }
 
     public render(): JSX.Element {

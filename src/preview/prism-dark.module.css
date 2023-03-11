@@ -1,0 +1,275 @@
+.prism_container :global  pre[class*="language-"],
+.prism_container :global  code[class*="language-"] {
+	color: #d4d4d4;
+	font-size: 13px;
+	text-shadow: none;
+	font-family: Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	line-height: 1.5;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+.prism_container :global  pre[class*="language-"]::selection,
+.prism_container :global  code[class*="language-"]::selection,
+.prism_container :global  pre[class*="language-"] *::selection,
+.prism_container :global  code[class*="language-"] *::selection {
+	text-shadow: none;
+	background: #264F78;
+}
+
+@media print {
+	.prism_container :global  pre[class*="language-"],
+	.prism_container :global  code[class*="language-"] {
+		text-shadow: none;
+	}
+}
+
+.prism_container :global  pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	background: #1e1e1e;
+}
+
+.prism_container :global  :not(pre) > code[class*="language-"] {
+	padding: .1em .3em;
+	border-radius: .3em;
+	color: #db4c69;
+	background: #1e1e1e;
+}
+/*********************************************************
+* Tokens
+*/
+.prism_container :global  .namespace {
+	opacity: .7;
+}
+
+.prism_container :global  .token.doctype .token.doctype-tag {
+	color: #569CD6;
+}
+
+.prism_container :global  .token.doctype .token.name {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.comment,
+.prism_container :global  .token.prolog {
+	color: #6a9955;
+}
+
+.prism_container :global  .token.punctuation,
+.prism_container :global  .language-html .language-css .token.punctuation,
+.prism_container :global  .language-html .language-javascript .token.punctuation {
+	color: #d4d4d4;
+}
+
+.prism_container :global  .token.property,
+.prism_container :global  .token.tag,
+.prism_container :global  .token.boolean,
+.prism_container :global  .token.number,
+.prism_container :global  .token.constant,
+.prism_container :global  .token.symbol,
+.prism_container :global  .token.inserted,
+.prism_container :global  .token.unit {
+	color: #b5cea8;
+}
+
+.prism_container :global  .token.selector,
+.prism_container :global  .token.attr-name,
+.prism_container :global  .token.string,
+.prism_container :global  .token.char,
+.prism_container :global  .token.builtin,
+.prism_container :global  .token.deleted {
+	color: #ce9178;
+}
+
+.prism_container :global  .language-css .token.string.url {
+	text-decoration: underline;
+}
+
+.prism_container :global  .token.operator,
+.prism_container :global  .token.entity {
+	color: #d4d4d4;
+}
+
+.prism_container :global  .token.operator.arrow {
+	color: #569CD6;
+}
+
+.prism_container :global  .token.atrule {
+	color: #ce9178;
+}
+
+.prism_container :global  .token.atrule .token.rule {
+	color: #c586c0;
+}
+
+.prism_container :global  .token.atrule .token.url {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.atrule .token.url .token.function {
+	color: #dcdcaa;
+}
+
+.prism_container :global  .token.atrule .token.url .token.punctuation {
+	color: #d4d4d4;
+}
+
+.prism_container :global  .token.keyword {
+	color: #569CD6;
+}
+
+.prism_container :global  .token.keyword.module,
+.prism_container :global  .token.keyword.control-flow {
+	color: #c586c0;
+}
+
+.prism_container :global  .token.function,
+.prism_container :global  .token.function .token.maybe-class-name {
+	color: #dcdcaa;
+}
+
+.prism_container :global  .token.regex {
+	color: #d16969;
+}
+
+.prism_container :global  .token.important {
+	color: #569cd6;
+}
+
+.prism_container :global  .token.italic {
+	font-style: italic;
+}
+
+.prism_container :global  .token.constant {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.class-name,
+.prism_container :global  .token.maybe-class-name {
+	color: #4ec9b0;
+}
+
+.prism_container :global  .token.console {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.parameter {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.interpolation {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .prism_container :global  .token.punctuation.interpolation-punctuation {
+	color: #569cd6;
+}
+
+.prism_container :global  .token.boolean {
+	color: #569cd6;
+}
+
+.prism_container :global  .token.property,
+.prism_container :global  .token.variable,
+.prism_container :global  .token.imports .token.maybe-class-name,
+.prism_container :global  .token.exports .token.maybe-class-name {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.selector {
+	color: #d7ba7d;
+}
+
+.prism_container :global  .token.escape {
+	color: #d7ba7d;
+}
+
+.prism_container :global  .token.tag {
+	color: #569cd6;
+}
+
+.prism_container :global  .token.tag .token.punctuation {
+	color: #808080;
+}
+
+.prism_container :global  .token.cdata {
+	color: #808080;
+}
+
+.prism_container :global  .token.attr-name {
+	color: #9cdcfe;
+}
+
+.prism_container :global  .token.attr-value,
+.prism_container :global  .token.attr-value .token.punctuation {
+	color: #ce9178;
+}
+
+.prism_container :global  .token.attr-value .token.punctuation.attr-equals {
+	color: #d4d4d4;
+}
+
+.prism_container :global  .token.entity {
+	color: #569cd6;
+}
+
+.prism_container :global  .token.namespace {
+	color: #4ec9b0;
+}
+/*********************************************************
+* Language Specific
+*/
+
+.prism_container :global  pre[class*="language-javascript"],
+.prism_container :global  code[class*="language-javascript"],
+.prism_container :global  pre[class*="language-jsx"],
+.prism_container :global  code[class*="language-jsx"],
+.prism_container :global  pre[class*="language-typescript"],
+.prism_container :global  code[class*="language-typescript"],
+.prism_container :global  pre[class*="language-tsx"],
+.prism_container :global  code[class*="language-tsx"] {
+	color: #9cdcfe;
+}
+
+.prism_container :global  pre[class*="language-css"],
+.prism_container :global  code[class*="language-css"] {
+	color: #ce9178;
+}
+
+.prism_container :global  pre[class*="language-html"],
+.prism_container :global  code[class*="language-html"] {
+	color: #d4d4d4;
+}
+
+.prism_container :global  .language-regex .token.anchor {
+	color: #dcdcaa;
+}
+
+.prism_container :global  .language-html .token.punctuation {
+	color: #808080;
+}
+/*********************************************************
+* Line highlighting
+*/
+.prism_container :global  pre[class*="language-"] > code[class*="language-"] {
+	position: relative;
+	z-index: 1;
+}
+
+.prism_container :global  .line-highlight.line-highlight {
+	background: #f7ebc6;
+	box-shadow: inset 5px 0 0 #f7d87c;
+	z-index: 0;
+}

@@ -9,7 +9,7 @@ import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 
 import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IProjectPageService, IExtensionDataService  } from "azure-devops-extension-api";
 
-import * as React from "react";
+import * as React from "react"; 
 
 import * as ReactDOM from "react-dom";
 
@@ -38,26 +38,7 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         await SDK.ready();
         const fileContent = SDK.getConfiguration().content;
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(fileContent, "text/xml");
-
-        // const hostInfo = SDK.getHost();
-        // console.log(hostInfo)
-        
-        //         //{ credentials: 'include'})
-        // fetch(`https://dev.azure.com/${hostInfo.name}/_apis/Settings/Entries/globalme`,
-        //     {
-        //         method: "GET",
-        //         headers: { 
-        //             'Authorization': 'Basic ' + btoa(`${SDK.getUser().name}:${SDK.getAccessToken()}`)
-        //         },
-        //     })
-        //     .then((res) => {
-        //         console.log(res);
-        //         res.json();
-        //     })
-        //     .then(res => {
-        //         console.log(res);
-        //     });
+        const xmlDoc = parser.parseFromString(fileContent, "text/xml"); 
 
         this.setState({ xml : xmlDoc }); 
     }

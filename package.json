@@ -35,7 +35,7 @@
     "@webpack-cli/generators": "^3.0.1",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
-    "eslint": "^8.34.0",
+    "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "node-sass": "^8.0.0",

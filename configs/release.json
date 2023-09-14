@@ -1,4 +1,4 @@
 {
   "id": "tc-preview-extension",
-  "public": false
+  "public": true
 }

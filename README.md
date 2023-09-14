@@ -1,6 +1,6 @@
 # TcPreview
 
-This unofficial extension allows previewing of Beckhoff TwinCAT 3 files within Azure DevOps.
+This unofficial extension allows previewing of Beckhoff TwinCAT 3 files within Azure DevOps. The source code is available on [GitHub](https://github.com/dfreiberger/tc-preview-extension).
 
 It currently supports the `.TcPOU`, `.TcDUT`, `.TcGVL` and `.TcIO` file extensions. Only Structured Text (ST) is supported, so any sections of the code that are in another format such as LD, FBD or UML will not be displayed.
 

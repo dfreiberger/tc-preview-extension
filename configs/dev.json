@@ -1,5 +1,6 @@
 {
   "id": "tc-preview-extension-dev",
   "public": false,
+  "name": "TcPreview Dev",
   "baseUri": "https://localhost:3000"
 }

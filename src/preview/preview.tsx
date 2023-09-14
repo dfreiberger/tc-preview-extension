@@ -20,6 +20,7 @@ import IecViewer from "./iecviewer";
  
 export interface IPreviewState {
     xml? : XMLDocument;
+    parentUrl? : string;
     urlParams? : { [key: string]: string };
 }
 
@@ -56,20 +57,20 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const pageRoute = await navigationService.getPageRoute();
         const routeValues = {
             project: pageRoute.routeValues.project,
-            ... queryParams
+            path: queryParams.path,
+            _a: queryParams._a
         }
-        const routeUrl = await locationService.routeUrl(pageRoute.id, routeValues)
-
-        this.setState({ xml : xmlDoc, urlParams: queryParams }); 
+        const routeUrl = await locationService.routeUrl(pageRoute.id, routeValues);
+        this.setState({ xml : xmlDoc, parentUrl: routeUrl, urlParams: queryParams }); 
     }
 
     public render(): JSX.Element {
-        const { xml, urlParams } = this.state;
+        const { xml, parentUrl, urlParams } = this.state;
         return (
             <SurfaceContext.Provider value={{ background: SurfaceBackground.normal }}>
                 <Page className="tc-preview-page absolute-fill">
                     <div className="page-content">
-                        <IecViewer xml={xml} urlParams={urlParams} />
+                        <IecViewer xml={xml} urlParams={urlParams} parentUrl={parentUrl}/>
                     </div>
                 </Page>
             </SurfaceContext.Provider>

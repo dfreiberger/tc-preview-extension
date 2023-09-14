@@ -10,20 +10,24 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import darkTheme from './prism-dark.module.css';
 import lightTheme from './prism-light.module.css';
 
+import { Icon } from 'azure-devops-ui/Icon';
+
 Prism.manual = true;
 
 type IecViewerData = {
     xml?: XMLDocument;
+    parentUrl?: string;
     urlParams?: { [key: string]: string };
 }
 
 type IecElement = {
     section: string,
     name: string,
-    element: Element
+    element: Element,
+    parentUrl?: string
 }
 
-const IecSection = ({ section, name, element }: IecElement) => {
+const IecSection = ({ section, name, element, parentUrl }: IecElement) => {
     const declaration = element.getElementsByTagName("Declaration")[0];
     const declarationContent = declaration ? declaration.textContent : "No content"
 
@@ -34,7 +38,7 @@ const IecSection = ({ section, name, element }: IecElement) => {
     return (
         <div>
             <section id={section}>
-                <h4>{name}</h4>
+                <a href={parentUrl + "&section=" + section} target="_parent" style={{ textDecoration: 'none' }}><h4>{name}</h4></a>
                 {(declaration && 
                 <pre className='line-numbers'>
                     <code className='language-iecst'>
@@ -53,7 +57,7 @@ const IecSection = ({ section, name, element }: IecElement) => {
 };
 
 
-const PouOrItfSection = ({ element }: IecElement) => {
+const PouOrItfSection = ({ element, parentUrl }: IecElement) => {
     const pouNodes = Array.from(element.children);
     const pouName = `(POU) ${element.getAttribute("Name")}`;
     const sectionName = element.getAttribute("Name")?.toLowerCase() ?? "pou";
@@ -83,7 +87,7 @@ const PouOrItfSection = ({ element }: IecElement) => {
     // Get all Methods, Actions, Transitions, and Properties
     return (
         <div>
-            <IecSection key={pouName} name={pouName} element={element} section={sectionName} />
+            <IecSection key={pouName} name={pouName} element={element} section={sectionName} parentUrl={parentUrl}/>
             {pouNodes.map((c, i) => {
                 const folderPath = c.getAttribute("FolderPath");
                 var childName = folderPath ? folderPath : "";
@@ -95,18 +99,18 @@ const PouOrItfSection = ({ element }: IecElement) => {
                     case "Method":
                     case "Action":
                     case "Transition":
-                        return <IecSection key={key} name={name} element={c} section={key}/>
+                        return <IecSection key={key} name={name} element={c} section={key} parentUrl={parentUrl}/>
                     case "Property":
                         const setter = c.getElementsByTagName("Set")[0];
                         const getter = c.getElementsByTagName("Get")[0];
                         var sections = new Array();
                         if (setter) {
                             const pName = name + ".Set";
-                            sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"}/>);
+                            sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"} parentUrl={parentUrl}/>);
                         }
                         if (getter) {
                             const pName = name + ".Get";
-                            sections.push(<IecSection key={key + "-get"} name={pName} element={getter} section={key + "-get"}/>);
+                            sections.push(<IecSection key={key + "-get"} name={pName} element={getter} section={key + "-get"} parentUrl={parentUrl}/>);
                         }
                         return sections;
                     case "Folder":
@@ -120,7 +124,7 @@ const PouOrItfSection = ({ element }: IecElement) => {
     )
 }
 
-const IecViewer = ({ xml, urlParams }: IecViewerData) => {
+const IecViewer = ({ xml, urlParams, parentUrl }: IecViewerData) => {
     if (!xml) {
         return (
             <div>No content</div>
@@ -134,7 +138,7 @@ const IecViewer = ({ xml, urlParams }: IecViewerData) => {
         const section = urlParams?.section;
         if (section) {
             const sectionElement = document.querySelector( `#${section}`);
-            sectionElement?.scrollIntoView( { behavior: 'auto', block: 'center' } );
+            sectionElement?.scrollIntoView( { behavior: 'auto', block: 'start' } );
         }
     }, [xml]);
 
@@ -171,13 +175,13 @@ const IecViewer = ({ xml, urlParams }: IecViewerData) => {
                 const section = "main-iec-content";
                 switch (n.nodeName) {
                     case "DUT":
-                        return <IecSection key={i} name={name} element={n} section={section}/>
+                        return <IecSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
                     case "POU":
-                        return <PouOrItfSection key={i} name={name} element={n} section={section}/>
+                        return <PouOrItfSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
                     case "GVL":
-                        return <IecSection key={i} name={name} element={n} section={section}/>
+                        return <IecSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
                     case "Itf":
-                        return <PouOrItfSection key={i} name={name} element={n} section={section}/>
+                        return <PouOrItfSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
                     default:
                         console.log("Unsupported type, ", n.nodeName);
                 }

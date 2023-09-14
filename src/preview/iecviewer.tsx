@@ -14,14 +14,16 @@ Prism.manual = true;
 
 type IecViewerData = {
     xml?: XMLDocument;
+    urlParams?: { [key: string]: string };
 }
 
 type IecElement = {
+    section: string,
     name: string,
     element: Element
 }
 
-const IecSection = ({ name, element }: IecElement) => {
+const IecSection = ({ section, name, element }: IecElement) => {
     const declaration = element.getElementsByTagName("Declaration")[0];
     const declarationContent = declaration ? declaration.textContent : "No content"
 
@@ -31,19 +33,21 @@ const IecSection = ({ name, element }: IecElement) => {
 
     return (
         <div>
-            <h4>{name}</h4>
-            {(declaration && 
-            <pre className='line-numbers'>
-                <code className='language-iecst'>
-                    {declarationContent}
-                </code>
-            </pre> )}
-            {(implementation && 
-            <pre className='line-numbers'> 
-                <code className='language-iecst'>
-                    {implementationContent}
-                </code>
-            </pre> )}
+            <section id={section}>
+                <h4>{name}</h4>
+                {(declaration && 
+                <pre className='line-numbers'>
+                    <code className='language-iecst'>
+                        {declarationContent}
+                    </code>
+                </pre> )}
+                {(implementation && 
+                <pre className='line-numbers'> 
+                    <code className='language-iecst'>
+                        {implementationContent}
+                    </code>
+                </pre> )}
+            </section>
         </div>
     )
 };
@@ -52,6 +56,7 @@ const IecSection = ({ name, element }: IecElement) => {
 const PouOrItfSection = ({ element }: IecElement) => {
     const pouNodes = Array.from(element.children);
     const pouName = `(POU) ${element.getAttribute("Name")}`;
+    const sectionName = element.getAttribute("Name")?.toLowerCase() ?? "pou";
 
     pouNodes.sort((a, b) => {
         try {
@@ -78,29 +83,30 @@ const PouOrItfSection = ({ element }: IecElement) => {
     // Get all Methods, Actions, Transitions, and Properties
     return (
         <div>
-            <IecSection key={pouName} name={pouName} element={element} />
+            <IecSection key={pouName} name={pouName} element={element} section={sectionName} />
             {pouNodes.map((c, i) => {
                 const folderPath = c.getAttribute("FolderPath");
                 var childName = folderPath ? folderPath : "";
                 childName += c.getAttribute("Name");
                 var name = `(${c.nodeName}) ${childName}`;
+                var key = childName.toLowerCase();
 
                 switch (c.nodeName) {
                     case "Method":
                     case "Action":
                     case "Transition":
-                        return <IecSection key={name} name={name} element={c} />
+                        return <IecSection key={key} name={name} element={c} section={key}/>
                     case "Property":
                         const setter = c.getElementsByTagName("Set")[0];
                         const getter = c.getElementsByTagName("Get")[0];
                         var sections = new Array();
                         if (setter) {
                             const pName = name + ".Set";
-                            sections.push(<IecSection key={pName} name={pName} element={setter} />);
+                            sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"}/>);
                         }
                         if (getter) {
                             const pName = name + ".Get";
-                            sections.push(<IecSection key={pName} name={pName} element={getter} />);
+                            sections.push(<IecSection key={key + "-get"} name={pName} element={getter} section={key + "-get"}/>);
                         }
                         return sections;
                     case "Folder":
@@ -114,15 +120,22 @@ const PouOrItfSection = ({ element }: IecElement) => {
     )
 }
 
-const IecViewer = ({ xml }: IecViewerData) => {
+const IecViewer = ({ xml, urlParams }: IecViewerData) => {
     if (!xml) {
         return (
             <div>No content</div>
         )
     }
-    
+
     useEffect(() => {
         Prism.highlightAll();
+
+        // if section is specified in the url, scroll to it
+        const section = urlParams?.section;
+        if (section) {
+            const sectionElement = document.querySelector( `#${section}`);
+            sectionElement?.scrollIntoView( { behavior: 'auto', block: 'center' } );
+        }
     }, [xml]);
 
     const [currentTheme, setCurrentTheme] = useState(lightTheme.prism_container);
@@ -155,18 +168,16 @@ const IecViewer = ({ xml }: IecViewerData) => {
         <div className={currentTheme}>
             {Array.from(xml.children[0].children).map((n, i) => {
                 var name = n.getAttribute("Name") ?? "?";
+                const section = "main-iec-content";
                 switch (n.nodeName) {
                     case "DUT":
-                        return <IecSection key={i} name={name} element={n}/>
+                        return <IecSection key={i} name={name} element={n} section={section}/>
                     case "POU":
-                        return <PouOrItfSection key={i} name={name} element={n}/>
-                        break;
+                        return <PouOrItfSection key={i} name={name} element={n} section={section}/>
                     case "GVL":
-                        return <IecSection key={i} name={name} element={n}/>
-                        break;
+                        return <IecSection key={i} name={name} element={n} section={section}/>
                     case "Itf":
-                        return <PouOrItfSection key={i} name={name} element={n}/>
-                        break;
+                        return <PouOrItfSection key={i} name={name} element={n} section={section}/>
                     default:
                         console.log("Unsupported type, ", n.nodeName);
                 }

@@ -7,7 +7,9 @@ import { Header } from "azure-devops-ui/Header";
 import { Page } from "azure-devops-ui/Page";
 import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 
-import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IProjectPageService, IExtensionDataService  } from "azure-devops-extension-api";
+import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IProjectPageService, IExtensionDataService, ILocationService  } from "azure-devops-extension-api";
+import { CoreRestClient } from "azure-devops-extension-api/Core";
+
 
 import * as React from "react"; 
 
@@ -18,6 +20,8 @@ import IecViewer from "./iecviewer";
  
 export interface IPreviewState {
     xml? : XMLDocument;
+    parentUrl? : string;
+    urlParams? : { [key: string]: string };
 }
 
 class PreviewContent extends React.Component<{}, IPreviewState> {
@@ -40,17 +44,29 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(fileContent, "text/xml"); 
 
-        this.setState({ xml : xmlDoc }); 
+        // extract the page url via AzDO SDK... non trivial since we can't just look at the window.location since it's in an iframe
+        const locationService = await SDK.getService<ILocationService>(CommonServiceIds.LocationService);
+
+        const hostBaseUrl = await locationService.getResourceAreaLocation(
+          CoreRestClient.RESOURCE_AREA_ID
+        );
+        const navigationService = await SDK.getService<IHostNavigationService >(CommonServiceIds.HostNavigationService);
+
+        const queryParams = await navigationService.getQueryParams(); 
+        const pageRoute = await navigationService.getPageRoute();
+
+        const routeUrl = `${hostBaseUrl}${pageRoute.routeValues.project}/_git/${pageRoute.routeValues.GitRepositoryName}?path=${queryParams.path}&_a=${queryParams._a}` 
+
+        this.setState({ xml : xmlDoc, parentUrl: routeUrl, urlParams: queryParams }); 
     }
 
     public render(): JSX.Element {
-        const { xml } = this.state;
-        const iframeUrl = window.location.href;
+        const { xml, parentUrl, urlParams } = this.state;
         return (
             <SurfaceContext.Provider value={{ background: SurfaceBackground.normal }}>
                 <Page className="tc-preview-page absolute-fill">
                     <div className="page-content">
-                        <IecViewer xml={xml} />
+                        <IecViewer xml={xml} urlParams={urlParams} parentUrl={parentUrl}/>
                     </div>
                 </Page>
             </SurfaceContext.Provider>

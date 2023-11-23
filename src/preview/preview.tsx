@@ -50,17 +50,13 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const hostBaseUrl = await locationService.getResourceAreaLocation(
           CoreRestClient.RESOURCE_AREA_ID
         );
-
         const navigationService = await SDK.getService<IHostNavigationService >(CommonServiceIds.HostNavigationService);
 
         const queryParams = await navigationService.getQueryParams(); 
         const pageRoute = await navigationService.getPageRoute();
-        const routeValues = {
-            project: pageRoute.routeValues.project,
-            path: queryParams.path,
-            _a: queryParams._a
-        }
-        const routeUrl = await locationService.routeUrl(pageRoute.id, routeValues);
+
+        const routeUrl = `${hostBaseUrl}${pageRoute.routeValues.project}/_git/${pageRoute.routeValues.GitRepositoryName}?path=${queryParams.path}&_a=${queryParams._a}` 
+
         this.setState({ xml : xmlDoc, parentUrl: routeUrl, urlParams: queryParams }); 
     }
 

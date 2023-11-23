@@ -1,18 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 
 import 'prismjs';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-iecst'; // Language
-import "prismjs/plugins/line-numbers/prism-line-numbers";
+import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+import 'prismjs/plugins/line-highlight/prism-line-highlight';
+import 'prismjs/plugins/line-highlight/prism-line-highlight.css';
+import 'prismjs/plugins/toolbar/prism-toolbar';
+import 'prismjs/plugins/toolbar/prism-toolbar.css';
 
-import darkTheme from './prism-dark.module.css';
-import lightTheme from './prism-light.module.css';
+import { copyToClipboard } from 'azure-devops-ui/Clipboard';
 
-import { Icon } from 'azure-devops-ui/Icon';
+import dark from './prism-dark.module.scss';
+import light from './prism-light.module.scss';
 
 Prism.manual = true;
+
 
 type IecViewerData = {
     xml?: XMLDocument;
@@ -24,10 +29,10 @@ type IecElement = {
     section: string,
     name: string,
     element: Element,
-    parentUrl?: string
+    urlParams?: { [key: string]: string }
 }
 
-const IecSection = ({ section, name, element, parentUrl }: IecElement) => {
+const IecSection = ({ section, element, urlParams }: IecElement) => {
     const declaration = element.getElementsByTagName("Declaration")[0];
     const declarationContent = declaration ? declaration.textContent : "No content"
 
@@ -35,32 +40,32 @@ const IecSection = ({ section, name, element, parentUrl }: IecElement) => {
     const implementationST = implementation ? implementation.getElementsByTagName("ST")[0] : null;
     const implementationContent = implementationST ? implementationST.textContent : "Unable to display content, it may be an unsupported format"
 
+    const highlightDeclaration = urlParams?.section === `declaration-${section}` ? urlParams?.lines ?? "" : "";
+    const highlightImplementation = urlParams?.section === `implementation-${section}` ? urlParams?.lines ?? "" : "";
+    
     return (
         <div>
-            <section id={section}>
-                <a href={parentUrl + "&section=" + section} target="_parent" style={{ textDecoration: 'none' }}><h4>{name}</h4></a>
-                {(declaration && 
-                <pre className='line-numbers'>
-                    <code className='language-iecst'>
+            {(declaration && 
+            <pre className='line-numbers declaration-section' data-line={highlightDeclaration}> 
+                <code className='language-iecst' id={`declaration-${section}`}>
                         {declarationContent}
-                    </code>
-                </pre> )}
-                {(implementation && 
-                <pre className='line-numbers'> 
-                    <code className='language-iecst'>
-                        {implementationContent}
-                    </code>
-                </pre> )}
-            </section>
+                </code>
+            </pre> )}
+            {(implementation && 
+            <pre className='line-numbers implementation-section' data-line={highlightImplementation}> 
+                <code className='language-iecst' id={`implementation-${section}`}>
+                    {implementationContent}
+                </code>
+            </pre> )}
         </div>
     )
 };
 
 
-const PouOrItfSection = ({ element, parentUrl }: IecElement) => {
+const PouOrItfSection = ({ element, urlParams }: IecElement) => {
     const pouNodes = Array.from(element.children);
     const pouName = `(POU) ${element.getAttribute("Name")}`;
-    const sectionName = element.getAttribute("Name")?.toLowerCase() ?? "pou";
+    const sectionName = element.getAttribute("Name") ?? "pou";
 
     pouNodes.sort((a, b) => {
         try {
@@ -86,31 +91,31 @@ const PouOrItfSection = ({ element, parentUrl }: IecElement) => {
 
     // Get all Methods, Actions, Transitions, and Properties
     return (
-        <div>
-            <IecSection key={pouName} name={pouName} element={element} section={sectionName} parentUrl={parentUrl}/>
+        <div className='iec-section'>
+            <IecSection key={pouName} name={pouName} element={element} section={sectionName} urlParams={urlParams}/>
             {pouNodes.map((c, i) => {
                 const folderPath = c.getAttribute("FolderPath");
                 var childName = folderPath ? folderPath : "";
                 childName += c.getAttribute("Name");
                 var name = `(${c.nodeName}) ${childName}`;
-                var key = childName.toLowerCase();
+                var key = childName;
 
                 switch (c.nodeName) {
                     case "Method":
                     case "Action":
                     case "Transition":
-                        return <IecSection key={key} name={name} element={c} section={key} parentUrl={parentUrl}/>
+                        return <IecSection key={key} name={name} element={c} section={key} urlParams={urlParams}/>
                     case "Property":
                         const setter = c.getElementsByTagName("Set")[0];
                         const getter = c.getElementsByTagName("Get")[0];
                         var sections = new Array();
                         if (setter) {
                             const pName = name + ".Set";
-                            sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"} parentUrl={parentUrl}/>);
+                            sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"} urlParams={urlParams}/>);
                         }
                         if (getter) {
                             const pName = name + ".Get";
-                            sections.push(<IecSection key={key + "-get"} name={pName} element={getter} section={key + "-get"} parentUrl={parentUrl}/>);
+                            sections.push(<IecSection key={key + "-get"} name={pName} element={getter} section={key + "-get"} urlParams={urlParams}/>);
                         }
                         return sections;
                     case "Folder":
@@ -124,7 +129,7 @@ const PouOrItfSection = ({ element, parentUrl }: IecElement) => {
     )
 }
 
-const IecViewer = ({ xml, urlParams, parentUrl }: IecViewerData) => {
+const IecViewer = ({ xml, parentUrl, urlParams }: IecViewerData) => {
     if (!xml) {
         return (
             <div>No content</div>
@@ -132,6 +137,14 @@ const IecViewer = ({ xml, urlParams, parentUrl }: IecViewerData) => {
     }
 
     useEffect(() => {
+        Prism.plugins.toolbar.registerButton('copy-link', {
+            text: 'Copy link',
+            onClick: (env: any) => {
+                const targetUrl = parentUrl + "&section=" + env.element.id;
+                copyToClipboard(targetUrl);
+            }
+        });
+
         Prism.highlightAll();
 
         // if section is specified in the url, scroll to it
@@ -142,15 +155,15 @@ const IecViewer = ({ xml, urlParams, parentUrl }: IecViewerData) => {
         }
     }, [xml]);
 
-    const [currentTheme, setCurrentTheme] = useState(lightTheme.prism_container);
+    const [currentTheme, setCurrentTheme] = useState(light.light_theme);
 
     // hack to set the theme based on an event generated by the SDK and/or the currently set palette
     useEffect(() => {
         const onThemeChanged = (event : any) => {
             if (event.detail.name === "Dark")
-                setCurrentTheme(darkTheme.prism_container)
+                setCurrentTheme(dark.dark_theme)
             else
-                setCurrentTheme(lightTheme.prism_container)
+                setCurrentTheme(light.light_theme)
         };
 
         window.addEventListener("themeChanged", onThemeChanged); 
@@ -161,7 +174,7 @@ const IecViewer = ({ xml, urlParams, parentUrl }: IecViewerData) => {
         const bodyStyles = window.getComputedStyle(document.body);
         var primary = bodyStyles.getPropertyValue('--palette-primary').trim();
         if (primary === "0, 129, 227")
-            setCurrentTheme(darkTheme.prism_container)
+            setCurrentTheme(dark.dark_theme)
 
         return () => {
             window.removeEventListener("themeChanged", onThemeChanged);
@@ -175,13 +188,13 @@ const IecViewer = ({ xml, urlParams, parentUrl }: IecViewerData) => {
                 const section = "main-iec-content";
                 switch (n.nodeName) {
                     case "DUT":
-                        return <IecSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
+                        return <IecSection key={i} name={name} element={n} section={section} urlParams={urlParams}/>
                     case "POU":
-                        return <PouOrItfSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
+                        return <PouOrItfSection key={i} name={name} element={n} section={section} urlParams={urlParams}/>
                     case "GVL":
-                        return <IecSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
+                        return <IecSection key={i} name={name} element={n} section={section} urlParams={urlParams}/>
                     case "Itf":
-                        return <PouOrItfSection key={i} name={name} element={n} section={section} parentUrl={parentUrl}/>
+                        return <PouOrItfSection key={i} name={name} element={n} section={section} urlParams={urlParams}/>
                     default:
                         console.log("Unsupported type, ", n.nodeName);
                 }

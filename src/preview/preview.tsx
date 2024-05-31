@@ -56,7 +56,11 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const pageRoute = await navigationService.getPageRoute();
 
 
-        const routeUrl = `${hostBaseUrl}${pageRoute.routeValues.project}/_git/${pageRoute.routeValues.GitRepositoryName}?path=${queryParams.path}&_a=${queryParams._a}&version=${queryParams.version}` 
+        var routeUrl = `${hostBaseUrl}${pageRoute.routeValues.project}/_git/${pageRoute.routeValues.GitRepositoryName}?path=${queryParams.path}&_a=${queryParams._a}`;
+
+        if (queryParams.version !== undefined) {
+            routeUrl += `&version=${queryParams.version}`;
+        }
 
         this.setState({ xml : xmlDoc, parentUrl: routeUrl, urlParams: queryParams }); 
     }

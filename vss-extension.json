@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "version": "0.1.26",
+  "version": "0.1.27",
   "name": "TcPreview",
   "description": "An extension for viewing TwinCAT files in Azure DevOps",
   "publisher": "dfreiberger",

@@ -7,7 +7,7 @@ import { Header } from "azure-devops-ui/Header";
 import { Page } from "azure-devops-ui/Page";
 import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 
-import { CommonServiceIds, IHostNavigationService, IHostPageLayoutService, IExtensionDataManager, IProjectPageService, IExtensionDataService, ILocationService  } from "azure-devops-extension-api";
+import { CommonServiceIds, IHostNavigationService, IExtensionDataManager, ILocationService  } from "azure-devops-extension-api";
 import { CoreRestClient } from "azure-devops-extension-api/Core";
 
 
@@ -55,7 +55,12 @@ class PreviewContent extends React.Component<{}, IPreviewState> {
         const queryParams = await navigationService.getQueryParams(); 
         const pageRoute = await navigationService.getPageRoute();
 
-        const routeUrl = `${hostBaseUrl}${pageRoute.routeValues.project}/_git/${pageRoute.routeValues.GitRepositoryName}?path=${queryParams.path}&_a=${queryParams._a}` 
+
+        var routeUrl = `${hostBaseUrl}${pageRoute.routeValues.project}/_git/${pageRoute.routeValues.GitRepositoryName}?path=${queryParams.path}&_a=${queryParams._a}`;
+
+        if (queryParams.version !== undefined) {
+            routeUrl += `&version=${queryParams.version}`;
+        }
 
         this.setState({ xml : xmlDoc, parentUrl: routeUrl, urlParams: queryParams }); 
     }

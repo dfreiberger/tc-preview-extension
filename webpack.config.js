@@ -15,7 +15,9 @@ module.exports = {
     publicPath: "/dist/",
   },
   devServer: {
-    https: true,
+    server: {
+      type: "https",
+    },
     port: 3000,
   },
   plugins: [

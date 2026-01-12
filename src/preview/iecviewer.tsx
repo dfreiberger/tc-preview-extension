@@ -33,12 +33,16 @@ type IecElement = {
 }
 
 const IecSection = ({ section, element, urlParams }: IecElement) => {
-    const declaration = element.getElementsByTagName("Declaration")[0];
-    const declarationContent = declaration ? declaration.textContent : "No content"
+    const getDirectChild = (parent: Element, tagName: string) => {
+        return Array.from(parent.children).find((c) => c.tagName === tagName);
+    };
 
-    const implementation = element.getElementsByTagName("Implementation")[0];
-    const implementationST = implementation ? implementation.getElementsByTagName("ST")[0] : null;
-    const implementationContent = implementationST ? implementationST.textContent : "Unable to display content, it may be an unsupported format"
+    const declaration = getDirectChild(element, "Declaration");
+    const declarationContent = declaration ? declaration.textContent : "No content";
+
+    const implementation = getDirectChild(element, "Implementation");
+    const implementationST = implementation ? getDirectChild(implementation, "ST") : null;
+    const implementationContent = implementationST ? implementationST.textContent : "Unable to display content, it may be an unsupported format";
 
     const highlightDeclaration = urlParams?.section === `declaration-${section}` ? urlParams?.lines ?? "" : "";
     const highlightImplementation = urlParams?.section === `implementation-${section}` ? urlParams?.lines ?? "" : "";
@@ -79,7 +83,7 @@ const PouOrItfSection = ({ element, urlParams }: IecElement) => {
 
             if (aAttr < bAttr)
                 return -1; // First should be sorted above second
-            else if (aAttr < bAttr)
+            else if (aAttr > bAttr)
                 return 1; // Second should be sorted above first
             return 0;
         }
@@ -109,6 +113,8 @@ const PouOrItfSection = ({ element, urlParams }: IecElement) => {
                         const setter = c.getElementsByTagName("Set")[0];
                         const getter = c.getElementsByTagName("Get")[0];
                         var sections = new Array();
+                        // Render the Property element itself (its <Declaration> contains the property signature)
+                        sections.push(<IecSection key={key} name={name} element={c} section={key} urlParams={urlParams}/>);
                         if (setter) {
                             const pName = name + ".Set";
                             sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"} urlParams={urlParams}/>);
@@ -140,7 +146,7 @@ const IecViewer = ({ xml, parentUrl, urlParams }: IecViewerData) => {
         Prism.plugins.toolbar.registerButton('copy-link', {
             text: 'Copy link',
             onClick: (env: any) => {
-                const targetUrl = parentUrl + "&section=" + env.element.id;
+                const targetUrl = parentUrl + "&section=" + encodeURIComponent(env.element.id);
                 copyToClipboard(targetUrl);
             }
         });
@@ -150,7 +156,7 @@ const IecViewer = ({ xml, parentUrl, urlParams }: IecViewerData) => {
         // if section is specified in the url, scroll to it
         const section = urlParams?.section;
         if (section) {
-            const sectionElement = document.querySelector( `#${section}`);
+            const sectionElement = document.getElementById(section);
             sectionElement?.scrollIntoView( { behavior: 'auto', block: 'start' } );
         }
     }, [xml]);
@@ -179,7 +185,7 @@ const IecViewer = ({ xml, parentUrl, urlParams }: IecViewerData) => {
         return () => {
             window.removeEventListener("themeChanged", onThemeChanged);
         }
-    })
+    }, [])
 
     return (
         <div className={currentTheme}>

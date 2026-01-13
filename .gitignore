@@ -8,3 +8,5 @@ out/
 
 publish-dev.ps1
 publish-prod.ps1
+
+.env

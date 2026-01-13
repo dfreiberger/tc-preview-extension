@@ -27,12 +27,12 @@ To develop locally, create an Azure DevOps organization and publish this extensi
 ```
 $env:ADO_PUBLISH_TOKEN="your token here"
 npm run compile:dev
-tfx extension publish --manifest-globs vss-extension.json --overrides-file configs/dev.json --token $env:ADO_PUBLISH_TOKEN --output-path out\
+npx tfx extension publish --manifest-globs vss-extension.json --overrides-file configs/dev.json --token $env:ADO_PUBLISH_TOKEN --output-path out\
 ```
 
 Start the local web server
 ```
-webpack-dev-server --mode development
+npm run start:dev
 ```
 
 Launch Google Chrome or your web browser and navigate to https://localhost:3000. You will need to accept / bypass the security warning.

@@ -9,3 +9,16 @@ h4 {
     margin-block-end: 0.5em;
 }
 
+.iec-implementation-markers {
+    margin: 0;
+}
+
+.iec-implementation-marker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+    text-transform: uppercase;
+    margin: 0;
+}
+

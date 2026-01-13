@@ -166,7 +166,24 @@
 		background: rgba(193, 222, 241, 0.2);
 	}
 
-	.implementation-section {
+	.implementation-section:not(.implementation-section--no-separator) {
+		border-bottom: 1px dashed #999999;
+	}
+
+	.declaration-section {
+		padding-top: 0.35em;
+		padding-bottom: 0.35em;
+	}
+
+	.iec-implementation-marker {
+		position: relative;
+		background-color: white;
+		border-left: 1px solid #dddddd;
+		border-right: 1px solid #dddddd;
+		padding: 0px 0 0px 1em;
+	}
+
+	.iec-implementation-marker--separator {
 		border-bottom: 1px dashed #999999;
 	}
  

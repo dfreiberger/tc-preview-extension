@@ -29,20 +29,24 @@ type IecElement = {
     section: string,
     name: string,
     element: Element,
+    implementationMarkers?: { start: string },
+    implementationMarkersSeparator?: boolean,
     urlParams?: { [key: string]: string }
 }
 
-const IecSection = ({ section, element, urlParams }: IecElement) => {
+const IecSection = ({ section, element, implementationMarkers, implementationMarkersSeparator, urlParams }: IecElement) => {
     const getDirectChild = (parent: Element, tagName: string) => {
         return Array.from(parent.children).find((c) => c.tagName === tagName);
     };
 
+    const elementName = element.getAttribute("Name") ?? "section";
+
     const declaration = getDirectChild(element, "Declaration");
-    const declarationContent = declaration ? declaration.textContent : "No content";
+    const declarationContent = declaration ? declaration.textContent : `No content for ${elementName}`;
 
     const implementation = getDirectChild(element, "Implementation");
     const implementationST = implementation ? getDirectChild(implementation, "ST") : null;
-    const implementationContent = implementationST ? implementationST.textContent : "Unable to display content, it may be an unsupported format";
+    const implementationContent = implementationST ? implementationST.textContent : `Unable to display content for ${elementName}, it may be an unsupported format`;
 
     const highlightDeclaration = urlParams?.section === `declaration-${section}` ? urlParams?.lines ?? "" : "";
     const highlightImplementation = urlParams?.section === `implementation-${section}` ? urlParams?.lines ?? "" : "";
@@ -55,12 +59,25 @@ const IecSection = ({ section, element, urlParams }: IecElement) => {
                         {declarationContent}
                 </code>
             </pre> )}
-            {(implementation && 
+            {(implementation && !implementationMarkers &&
             <pre className='line-numbers implementation-section' data-line={highlightImplementation}> 
                 <code className='language-iecst' id={`implementation-${section}`}>
                     {implementationContent}
                 </code>
             </pre> )}
+            {(implementation && implementationMarkers &&
+            <div className='iec-implementation-markers'>
+                <div className='iec-implementation-marker iec-implementation-marker--start'>{implementationMarkers.start}</div>
+                <pre className='line-numbers implementation-section implementation-section--no-separator' data-line={highlightImplementation}> 
+                    <code className='language-iecst' id={`implementation-${section}`}>
+                        {implementationContent}
+                    </code>
+                </pre>
+                <div className={
+                    'iec-implementation-marker iec-implementation-marker--end' +
+                    (implementationMarkersSeparator ? ' iec-implementation-marker--separator' : '')
+                }></div>
+            </div> )}
         </div>
     )
 };
@@ -117,11 +134,31 @@ const PouOrItfSection = ({ element, urlParams }: IecElement) => {
                         sections.push(<IecSection key={key} name={name} element={c} section={key} urlParams={urlParams}/>);
                         if (setter) {
                             const pName = name + ".Set";
-                            sections.push(<IecSection key={key + "-set"} name={pName} element={setter} section={key + "-set"} urlParams={urlParams}/>);
+                            sections.push(
+                                <IecSection
+                                    key={key + "-set"}
+                                    name={pName}
+                                    element={setter}
+                                    section={key + "-set"}
+                                    implementationMarkers={{ start: "SET" }}
+                                    implementationMarkersSeparator={!getter}
+                                    urlParams={urlParams}
+                                />
+                            );
                         }
                         if (getter) {
                             const pName = name + ".Get";
-                            sections.push(<IecSection key={key + "-get"} name={pName} element={getter} section={key + "-get"} urlParams={urlParams}/>);
+                            sections.push(
+                                <IecSection
+                                    key={key + "-get"}
+                                    name={pName}
+                                    element={getter}
+                                    section={key + "-get"}
+                                    implementationMarkers={{ start: "GET" }}
+                                    implementationMarkersSeparator={true}
+                                    urlParams={urlParams}
+                                />
+                            );
                         }
                         return sections;
                     case "Folder":

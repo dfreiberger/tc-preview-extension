@@ -290,7 +290,24 @@
 		overflow: hidden;
 	}
 	
-	.implementation-section { 
+	.implementation-section:not(.implementation-section--no-separator) { 
+		border-bottom: 1px dashed #555555;
+	}
+
+	.declaration-section {
+		padding-top: 0.35em;
+		padding-bottom: 0.35em;
+	}
+
+	.iec-implementation-marker {
+		position: relative;
+		background: #1e1e1e;
+		border-left: 1px solid #555555;
+		border-right: 1px solid #555555;
+		padding: 0px 0 0px 1em;
+	}
+
+	.iec-implementation-marker--separator {
 		border-bottom: 1px dashed #555555;
 	}
  
